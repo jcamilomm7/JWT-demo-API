@@ -2,6 +2,7 @@ package com.DEMOJWT.demo.controller;
 
 import com.DEMOJWT.demo.dto.User;
 import com.DEMOJWT.demo.repositories.RepositorioUser;
+import com.DEMOJWT.demo.services.UserServices;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,43 +17,34 @@ import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
+    @Autowired
+    private UserServices userServices;
 
     @Autowired
     private RepositorioUser repositorioUser;
 
+
+    //Dejamos este endpoint para registro de usuarios
     @PostMapping("sigin")
     public User user(@RequestParam("user") String username, @RequestParam("password") String pwd) {
-
-        User user = new User();
-        user.setUser(username);
-        user.setPwd(pwd);
-        repositorioUser.save(user);
-        return user;
-
+        return userServices.sigin(username, pwd);
     }
 
+
+    //Este endpoint mira en la BD que si este registrado y luego le genera el token
     @PostMapping("login")
-    public User login(@RequestParam("user") String username, @RequestParam("password") String pwd) {
+    public List<User> login(@RequestParam("user") String username, @RequestParam("password") String pwd) {
+        String token = getJWTToken(username);
+        return userServices.login(username, pwd, token);
 
-        //Lista para obtener resultados desde la BD
-        Iterable<User> usuarios = new ArrayList<>();
-        usuarios = repositorioUser.findAll();
-
-        //Lista para devolver los resultados al front
-        //List<ResponseTodo> response= new ArrayList<>();
-
-        //Recorremos lista de entidad
-        for ( User user: usuarios ) {
-            if((user.getUser().equals(username))&& (user.getPwd().equals(pwd) )){
-                String token = getJWTToken(username);
-                user.setToken(token);
-                return user;
-            }
-
-        }
-        //Cuando el usuario no existe falta implementar una excepcion
-        return null;
     }
+
+    //Listar todos los usuarios
+    @GetMapping(value = "getusers")
+    public List<User> list() {
+        return userServices.list();
+    }
+
 
     private String getJWTToken(String username) {
         String secretKey = "mySecretKey";
