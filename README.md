@@ -10,7 +10,7 @@
 ![post3](https://user-images.githubusercontent.com/62685470/171543022-bb46b65d-4a4d-4241-8876-4dd6d5aa9dcb.png)
 # Endpoint de inicio de seccion de usuarios.
 Endpoint ![sigin](https://user-images.githubusercontent.com/62685470/171547021-02f8c5e1-c77b-48ed-8d89-334e90f0e786.png)
-# Endpoint de inicio de mostrar usuarios.
+# Endpoint de mostrar usuarios.
 ![post4](https://user-images.githubusercontent.com/62685470/171547706-427464ff-3db2-41e2-b7f5-3c9b48e532d5.png)
 
 
