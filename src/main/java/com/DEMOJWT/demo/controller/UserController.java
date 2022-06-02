@@ -7,11 +7,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,18 +20,38 @@ public class UserController {
     @Autowired
     private RepositorioUser repositorioUser;
 
-    @PostMapping("user")
-    public User login(@RequestParam("user") String username, @RequestParam("password") String pwd) {
+    @PostMapping("sigin")
+    public User user(@RequestParam("user") String username, @RequestParam("password") String pwd) {
 
-
-        String token = getJWTToken(username);
         User user = new User();
         user.setUser(username);
         user.setPwd(pwd);
         repositorioUser.save(user);
-        user.setToken(token);
         return user;
 
+    }
+
+    @PostMapping("login")
+    public User login(@RequestParam("user") String username, @RequestParam("password") String pwd) {
+
+        //Lista para obtener resultados desde la BD
+        Iterable<User> usuarios = new ArrayList<>();
+        usuarios = repositorioUser.findAll();
+
+        //Lista para devolver los resultados al front
+        //List<ResponseTodo> response= new ArrayList<>();
+
+        //Recorremos lista de entidad
+        for ( User user: usuarios ) {
+            if((user.getUser().equals(username))&& (user.getPwd().equals(pwd) )){
+                String token = getJWTToken(username);
+                user.setToken(token);
+                return user;
+            }
+
+        }
+        //Cuando el usuario no existe falta implementar una excepcion
+        return null;
     }
 
     private String getJWTToken(String username) {
